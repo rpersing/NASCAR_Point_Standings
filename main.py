@@ -11,8 +11,20 @@ options.add_argument("--disable-gpu")
 driver = webdriver.Chrome(PATH, options=options)
 driver.get("https://www.nascar.com/standings/nascar-cup-series/")
 
+
+def get_list_info(section: str):
+    if section == "playoffs":
+        for k in range(0, 16):
+            print("{}.) ".format(k + 1).ljust(5) + all_drivers[k].getName().ljust(16) + "|".rjust(2),
+                  all_drivers[k].getPoints(), "|".rjust(2),
+                  all_drivers[k].hasWon().ljust(7), "|", all_drivers[k].get_laps_led(), "laps led")
+    elif section == "all":
+        for count, each in enumerate(all_drivers, start=1):
+            print("{}.) ".format(count).ljust(5) + each.getName().ljust(18) + "|".rjust(2),
+                  each.getPoints(), " |".ljust(2).rjust(2), each.hasWon().ljust(7).rjust(7), "|", each.get_laps_led(), "laps led")
+
+
 all_drivers = []
-playoffs = []
 
 time.sleep(2)
 
@@ -46,17 +58,22 @@ driver.close()
 running = True
 
 while running:
-    count = 1
+    command_help = "Commands:\n"\
+                   "playoffs - shows stats of drivers in playoffs\n"\
+                   "all - shows all drivers stats\n"\
+                   "driver - get stats for a specific driver\n"\
+                   "help - reprint all commands"
+
     command = input("What information would you like?: ")
 
     if command == "playoffs":
-        for driver in playoffs:
-            print("{}.) ".format(count).ljust(5) + driver.getName().ljust(16) + "|".rjust(2), driver.getPoints(), "|".rjust(2),
-                  driver.hasWon().ljust(7), "|", driver.get_laps_led(), "laps led")
-            count += 1
+        get_list_info(command)
 
-    if command == "all":
-        for driver in all_drivers:
-            print("{}.) ".format(count).ljust(5) + driver.getName().ljust(16) + "|".rjust(2), driver.getPoints(), "|".rjust(2),
-                  driver.hasWon().ljust(7), "|", driver.get_laps_led(), "laps led")
-            count += 1
+    elif command == "all":
+        get_list_info(command)
+
+    elif command == "driver":
+        print("Which driver would you like to see detailed stats for?")
+
+    elif command == "help":
+        print(command_help)
