@@ -49,8 +49,6 @@ for i in range(2, 41):
     points = int(points)
     d = Driver(name, points, win, laps)
     all_drivers.append(d)
-    if i < 18:
-        playoffs.append(d)
 
 
 driver.close()
