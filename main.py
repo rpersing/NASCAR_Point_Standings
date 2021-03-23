@@ -18,6 +18,7 @@ def get_list_info(section: str):
             print("{}.) ".format(k + 1).ljust(5) + all_drivers[k].getName().ljust(16) + "|".rjust(2),
                   all_drivers[k].getPoints(), "|".rjust(2),
                   all_drivers[k].hasWon().ljust(7), "|", all_drivers[k].get_laps_led())
+
     elif section == "all":
         for count, each in enumerate(all_drivers, start=1):
             print("{}.) ".format(count).ljust(5) + each.getName().ljust(18) + "|".rjust(2),
@@ -25,11 +26,14 @@ def get_list_info(section: str):
 
     elif section == "driver":
         input_driver = input("Which driver would you like to get stats for?: ")
+        print("\n-------------------------\n")
         for n in all_drivers:
             if n.getName().lower() == input_driver.lower():
-                return print(n.getName() + "\n" + n.getPoints() + "\n" + n.hasWon() + "\n" + n.get_laps_led())
+                return print(n.getName() + "\n" + n.getPoints() + "\n" + n.hasWon() + "\n" + n.get_laps_led() + "\n" +
+                             n.get_amount_of_wins() + "\nDNFs: " + n.get_dnfs() + "\nStage Wins: " + n.get_stage_wins()
+                             + "\n")
 
-        return print(input_driver + " does not exist. Please try again.")
+        return print(input_driver + " does not exist. Please try again.\n")
 
 
 all_drivers = []
@@ -37,28 +41,32 @@ all_drivers = []
 time.sleep(2)
 
 for i in range(2, 41):
-    win = False
+    won = False
     name_element = "//*[@id='pgc-160534-1-0']/div[2]/div[2]/table/tbody/tr[{}]/td[2]/a/span[2]"
     points_element = "//*[@id='pgc-160534-1-0']/div[2]/div[2]/div/table/tbody/tr[{}]/td[2]"
     laps_element = "//*[@id='pgc-160534-1-0']/div[2]/div[2]/div/table/tbody/tr[{}]/td[9]"
+    win_element = "//*[@id='pgc-160534-1-0']/div[2]/div[2]/div/table/tbody/tr[{}]/td[5]"
+    dnf_element = "//*[@id='pgc-160534-1-0']/div[2]/div[2]/div/table/tbody/tr[{}]/td[8]"
+    stage_wins = "//*[@id='pgc-160534-1-0']/div[2]/div[2]/div/table/tbody/tr[{}]/td[10]"
 
     try:
         name = driver.find_element_by_xpath(name_element.format(i)).text
         points = driver.find_element_by_xpath(points_element.format(i)).text
         laps = driver.find_element_by_xpath(laps_element.format(i)).text
+        num_wins = driver.find_element_by_xpath(win_element.format(i)).text
+        dnf = driver.find_element_by_xpath(dnf_element.format(i)).text
+        stages = driver.find_element_by_xpath(stage_wins.format(i)).text
     except NoSuchElementException:
         continue
 
-    # print(laps)
     for j in name:
         if j == "*":
-            win = True
+            won = True
             name = name[:-1]
 
     points = int(points)
-    d = Driver(name, points, win, laps)
+    d = Driver(name, points, won, num_wins, dnf, stages, laps)
     all_drivers.append(d)
-
 
 driver.close()
 
@@ -68,13 +76,13 @@ command_help = "Commands:\n" \
                "playoffs - shows stats of drivers in playoffs\n" \
                "all - shows all drivers stats\n" \
                "driver - get stats for a specific driver\n" \
-               "help - reprint all commands"
+               "help - reprint all commands\n"
 
 print(command_help)
 
 while running:
 
-    command = input("What information would you like?: ")
+    command = input("What information would you like?: \n")
 
     if command == "playoffs":
         get_list_info(command)
@@ -82,6 +90,7 @@ while running:
     if command == "all":
         get_list_info(command)
 
+    # TODO make specific driver stats more specific (epic data visualization)
     if command == "driver":
         get_list_info(command)
 
