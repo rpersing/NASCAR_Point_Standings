@@ -3,13 +3,14 @@ class Driver:
         self.name = name
         self.points = points
         self.won = won
+        # self.wins = amount_of_wins
         self.laps_led = laps_led
 
     def getName(self):
         return self.name
 
     def getPoints(self):
-        return self.points
+        return "Points: " + str(self.points)
 
     def setName(self, n):
         self.name = n
@@ -24,7 +25,7 @@ class Driver:
             return "No wins"
 
     def get_laps_led(self):
-        return self.points
+        return "Laps led: " + str(self.laps_led)
 
     def set_laps_led(self, laps):
         self.laps_led = laps

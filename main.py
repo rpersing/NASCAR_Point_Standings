@@ -17,11 +17,19 @@ def get_list_info(section: str):
         for k in range(0, 16):
             print("{}.) ".format(k + 1).ljust(5) + all_drivers[k].getName().ljust(16) + "|".rjust(2),
                   all_drivers[k].getPoints(), "|".rjust(2),
-                  all_drivers[k].hasWon().ljust(7), "|", all_drivers[k].get_laps_led(), "laps led")
+                  all_drivers[k].hasWon().ljust(7), "|", all_drivers[k].get_laps_led())
     elif section == "all":
         for count, each in enumerate(all_drivers, start=1):
             print("{}.) ".format(count).ljust(5) + each.getName().ljust(18) + "|".rjust(2),
-                  each.getPoints(), " |".ljust(2).rjust(2), each.hasWon().ljust(7).rjust(7), "|", each.get_laps_led(), "laps led")
+                  each.getPoints(), " |".ljust(2).rjust(2), each.hasWon().ljust(7).rjust(7), "|", each.get_laps_led())
+
+    elif section == "driver":
+        input_driver = input("Which driver would you like to get stats for?: ")
+        for n in all_drivers:
+            if n.getName().lower() == input_driver.lower():
+                return print(n.getName() + "\n" + n.getPoints() + "\n" + n.hasWon() + "\n" + n.get_laps_led())
+
+        return print(input_driver + " does not exist. Please try again.")
 
 
 all_drivers = []
@@ -41,6 +49,7 @@ for i in range(2, 41):
     except NoSuchElementException:
         continue
 
+    # print(laps)
     for j in name:
         if j == "*":
             win = True
@@ -55,23 +64,26 @@ driver.close()
 
 running = True
 
+command_help = "Commands:\n" \
+               "playoffs - shows stats of drivers in playoffs\n" \
+               "all - shows all drivers stats\n" \
+               "driver - get stats for a specific driver\n" \
+               "help - reprint all commands"
+
+print(command_help)
+
 while running:
-    command_help = "Commands:\n"\
-                   "playoffs - shows stats of drivers in playoffs\n"\
-                   "all - shows all drivers stats\n"\
-                   "driver - get stats for a specific driver\n"\
-                   "help - reprint all commands"
 
     command = input("What information would you like?: ")
 
     if command == "playoffs":
         get_list_info(command)
 
-    elif command == "all":
+    if command == "all":
         get_list_info(command)
 
-    elif command == "driver":
-        print("Which driver would you like to see detailed stats for?")
+    if command == "driver":
+        get_list_info(command)
 
-    elif command == "help":
+    if command == "help":
         print(command_help)
