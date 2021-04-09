@@ -12,28 +12,35 @@ driver = webdriver.Chrome(PATH, options=options)
 driver.get("https://www.nascar.com/standings/nascar-cup-series/")
 
 
-def get_list_info(section: str):
-    if section == "playoffs":
-        for k in range(0, 16):
-            print("{}.) ".format(k + 1).ljust(5) + all_drivers[k].getName().ljust(16) + "|".rjust(2),
-                  all_drivers[k].getPoints(), "|".rjust(2),
-                  all_drivers[k].hasWon().ljust(7), "|", all_drivers[k].get_laps_led())
+def get_playoffs():
+    for k in range(0, 16):
+        print("{}.) ".format(k + 1).ljust(5) + all_drivers[k].getName().ljust(16) + "|".rjust(2) +
+              all_drivers[k].getPoints() + "|".rjust(2),
+              all_drivers[k].hasWon().ljust(7) + "|" + all_drivers[k].get_laps_led())
 
-    elif section == "all":
-        for count, each in enumerate(all_drivers, start=1):
-            print("{}.) ".format(count).ljust(5) + each.getName().ljust(18) + "|".rjust(2),
-                  each.getPoints(), " |".ljust(2).rjust(2), each.hasWon().ljust(7).rjust(7), "|", each.get_laps_led())
 
-    elif section == "driver":
-        input_driver = input("Which driver would you like to get stats for?: ")
-        print("\n-------------------------\n")
-        for n in all_drivers:
-            if n.getName().lower() == input_driver.lower():
-                return print(n.getName() + "\n" + n.getPoints() + "\n" + n.hasWon() + "\n" + n.get_laps_led() + "\n" +
-                             n.get_amount_of_wins() + "\nDNFs: " + n.get_dnfs() + "\nStage Wins: " + n.get_stage_wins()
-                             + "\n")
+def get_all_drivers():
+    for count, each in enumerate(all_drivers, start=1):
+        print("{}.) ".format(count).ljust(5) + each.getName().ljust(18) + "|".rjust(2),
+              each.getPoints() + " | ".ljust(2).rjust(2) + each.hasWon().ljust(7).rjust(7) + " | " + each.get_laps_led())
 
-        return print(input_driver + " does not exist. Please try again.\n")
+
+def get_winners():
+    for enum, w in enumerate(all_drivers):
+        if w.hasWon() == "Win":
+            print("{}.) ".format(enum).ljust(5) + w.getName())
+
+
+def get_specific_driver():
+    driver_name = input("Which driver would you like to get stats for?: ")
+    print("\n-------------------------\n")
+    for n in all_drivers:
+        if n.getName().lower() == driver_name.lower():
+            return print(n.getName() + "\n" + n.getPoints() + "\n" + n.hasWon() + "\n" + n.get_laps_led() + "\n" +
+                         n.get_amount_of_wins() + "\nDNFs: " + n.get_dnfs() + "\nStage Wins: " + n.get_stage_wins()
+                         + "\n")
+
+    return print(driver_name + " does not exist. Please try again.\n")
 
 
 all_drivers = []
@@ -76,7 +83,9 @@ command_help = "Commands:\n" \
                "playoffs - shows stats of drivers in playoffs\n" \
                "all - shows all drivers stats\n" \
                "driver - get stats for a specific driver\n" \
-               "help - reprint all commands\n"
+               "winners - get names of all drivers that have won\n" \
+               "help - reprint all commands\n" \
+               "quit - exit the program"
 
 print(command_help)
 
@@ -85,14 +94,22 @@ while running:
     command = input("What information would you like?: \n")
 
     if command == "playoffs":
-        get_list_info(command)
+        get_playoffs()
 
     if command == "all":
-        get_list_info(command)
+        get_all_drivers()
+
+    if command == "winners":
+        get_winners()
 
     # TODO make specific driver stats more specific (epic data visualization)
     if command == "driver":
-        get_list_info(command)
+        get_specific_driver()
 
     if command == "help":
         print(command_help)
+
+    if command == "quit":
+        print("Goodbye!")
+        running = False
+

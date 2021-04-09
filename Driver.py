@@ -11,11 +11,11 @@ class Driver:
     def getName(self):
         return self.name
 
-    def getPoints(self):
-        return "Points: " + str(self.points)
-
     def setName(self, n):
         self.name = n
+
+    def getPoints(self):
+        return "Points: " + str(self.points)
 
     def setPoints(self, p):
         self.points = p
