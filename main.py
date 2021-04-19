@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 import time
 from Driver import Driver
+from Track import Track
 
 PATH = "D:\Program Files (x86)\chromedriver.exe"
 options = Options()
@@ -22,13 +23,16 @@ def get_playoffs():
 def get_all_drivers():
     for count, each in enumerate(all_drivers, start=1):
         print("{}.) ".format(count).ljust(5) + each.getName().ljust(18) + "|".rjust(2),
-              each.getPoints() + " | ".ljust(2).rjust(2) + each.hasWon().ljust(7).rjust(7) + " | " + each.get_laps_led())
+              each.getPoints() + " | ".ljust(3).rjust(3) + each.hasWon().ljust(8).rjust(8) + " | " +
+              each.get_amount_of_wins() + " | " + each.get_laps_led())
 
 
 def get_winners():
-    for enum, w in enumerate(all_drivers):
+    count = 1
+    for w in all_drivers:
         if w.hasWon() == "Win":
-            print("{}.) ".format(enum).ljust(5) + w.getName())
+            print("{}.) ".format(count).ljust(5) + w.getName() + " | " + w.get_amount_of_wins())
+            count += 1
 
 
 def get_specific_driver():
@@ -75,7 +79,33 @@ for i in range(2, 41):
     d = Driver(name, points, won, num_wins, dnf, stages, laps)
     all_drivers.append(d)
 
-driver.close()
+# driver.close()
+schedule = []
+driver.get("https://www.nascar.com/nascar-cup-series/2021/schedule/")
+
+t_brand_element = "//*[@id=\"pgc-284644-4-0\"]/div/div[{}]/ul/li[{}]/div/div[2]/h3"
+t_name_element = "//*[@id=\"pgc-284644-4-0\"]/div/div[{}]/ul/li[{}]/div/div[2]/p[1]"
+t_laps_element = "//*[@id=\"pgc-284644-4-0\"]/div/div[{}]/ul/li[{}]/div[1]/div[3]/p[2]"
+
+for month in range(3, 13):
+    for races in range(1, 6):
+        try:
+            t_brand = driver.find_element_by_xpath(t_brand_element.format(month, races)).text
+            t_name = driver.find_element_by_xpath(t_name_element.format(month, races)).text
+            t_laps = driver.find_element_by_xpath(t_laps_element.format(month, races)).text
+            t_laps = t_laps.split("-")
+            t_laps = t_laps[1].strip()
+            t_laps = t_laps.split("/")
+            t_laps, t_miles = t_laps[0], t_laps[1]
+
+            track = Track(t_brand, t_name, t_laps, t_miles)
+            schedule.append(track)
+        except NoSuchElementException:
+            continue
+
+'''for track in schedule:
+    print(track.get_track_name())'''
+
 
 running = True
 
@@ -97,6 +127,7 @@ while running:
         get_playoffs()
 
     if command == "all":
+        print("POS | NAME              | POINTS      | HAS WON  | NUM OF WINS       | LAPS LED")
         get_all_drivers()
 
     if command == "winners":
