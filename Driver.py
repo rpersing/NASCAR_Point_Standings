@@ -1,5 +1,6 @@
 class Driver:
-    def __init__(self, name: str, points: int, won: bool, amount_of_wins: int, dnfs: str, stage_wins: int, laps_led: int):
+    def __init__(self, name: str, points: int, won: bool, amount_of_wins: int, dnfs: str, stage_wins: int,
+                 laps_led: int):
         self.name = name
         self.points = points
         self.won = won
@@ -15,10 +16,16 @@ class Driver:
         self.name = n
 
     def getPoints(self):
-        return "Points: " + str(self.points)
+        return str(self.points)
 
     def setPoints(self, p):
         self.points = p
+
+    def getPlayoffPoints(self):
+        return self.playoff_points
+
+    def setPlayoffPoints(self, pp):
+        self.playoff_points = pp
 
     def hasWon(self):
         if self.won:
@@ -49,4 +56,3 @@ class Driver:
 
     def set_stage_wins(self, sw):
         self.stage_wins = sw
-

@@ -9,8 +9,8 @@ PATH = "D:\Program Files (x86)\chromedriver.exe"
 options = Options()
 options.add_argument("--headless")
 options.add_argument("--disable-gpu")
-driver = webdriver.Chrome(PATH, options=options)
-driver.get("https://www.nascar.com/standings/nascar-cup-series/")
+web_driver = webdriver.Chrome(PATH, options=options)
+web_driver.get("https://www.nascar.com/standings/nascar-cup-series/")
 
 
 def get_playoffs():
@@ -51,6 +51,11 @@ all_drivers = []
 
 time.sleep(2)
 
+playoff_sort = web_driver.find_element_by_xpath(
+    "//*[@id=\"pgc-160534-1-0\"]/div[2]/div[2]/div/table/tbody/tr[1]/th[12]")
+
+playoff_sort.click()
+
 for i in range(2, 41):
     won = False
     name_element = "//*[@id='pgc-160534-1-0']/div[2]/div[2]/table/tbody/tr[{}]/td[2]/a/span[2]"
@@ -61,12 +66,12 @@ for i in range(2, 41):
     stage_wins = "//*[@id='pgc-160534-1-0']/div[2]/div[2]/div/table/tbody/tr[{}]/td[10]"
 
     try:
-        name = driver.find_element_by_xpath(name_element.format(i)).text
-        points = driver.find_element_by_xpath(points_element.format(i)).text
-        laps = driver.find_element_by_xpath(laps_element.format(i)).text
-        num_wins = driver.find_element_by_xpath(win_element.format(i)).text
-        dnf = driver.find_element_by_xpath(dnf_element.format(i)).text
-        stages = driver.find_element_by_xpath(stage_wins.format(i)).text
+        name = web_driver.find_element_by_xpath(name_element.format(i)).text
+        points = web_driver.find_element_by_xpath(points_element.format(i)).text
+        laps = web_driver.find_element_by_xpath(laps_element.format(i)).text
+        num_wins = web_driver.find_element_by_xpath(win_element.format(i)).text
+        dnf = web_driver.find_element_by_xpath(dnf_element.format(i)).text
+        stages = web_driver.find_element_by_xpath(stage_wins.format(i)).text
     except NoSuchElementException:
         continue
 
@@ -79,9 +84,8 @@ for i in range(2, 41):
     d = Driver(name, points, won, num_wins, dnf, stages, laps)
     all_drivers.append(d)
 
-# driver.close()
 schedule = []
-driver.get("https://www.nascar.com/nascar-cup-series/2021/schedule/")
+web_driver.get("https://www.nascar.com/nascar-cup-series/2021/schedule/")
 
 t_brand_element = "//*[@id=\"pgc-284644-4-0\"]/div/div[{}]/ul/li[{}]/div/div[2]/h3"
 t_name_element = "//*[@id=\"pgc-284644-4-0\"]/div/div[{}]/ul/li[{}]/div/div[2]/p[1]"
@@ -90,9 +94,9 @@ t_laps_element = "//*[@id=\"pgc-284644-4-0\"]/div/div[{}]/ul/li[{}]/div[1]/div[3
 for month in range(3, 13):
     for races in range(1, 6):
         try:
-            t_brand = driver.find_element_by_xpath(t_brand_element.format(month, races)).text
-            t_name = driver.find_element_by_xpath(t_name_element.format(month, races)).text
-            t_laps = driver.find_element_by_xpath(t_laps_element.format(month, races)).text
+            t_brand = web_driver.find_element_by_xpath(t_brand_element.format(month, races)).text
+            t_name = web_driver.find_element_by_xpath(t_name_element.format(month, races)).text
+            t_laps = web_driver.find_element_by_xpath(t_laps_element.format(month, races)).text
             t_laps = t_laps.split("-")
             t_laps = t_laps[1].strip()
             t_laps = t_laps.split("/")
@@ -102,10 +106,6 @@ for month in range(3, 13):
             schedule.append(track)
         except NoSuchElementException:
             continue
-
-'''for track in schedule:
-    print(track.get_track_name())'''
-
 
 running = True
 
@@ -133,7 +133,7 @@ while running:
     if command == "winners":
         get_winners()
 
-    # TODO make specific driver stats more specific (epic data visualization)
+    # TODO make specific driver stats more specific with data visualization
     if command == "driver":
         get_specific_driver()
 
@@ -143,4 +143,3 @@ while running:
     if command == "quit":
         print("Goodbye!")
         running = False
-
